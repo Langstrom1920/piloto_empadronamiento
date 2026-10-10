@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Plantilla Empadronamiento</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    margin: 5px 0 15px;
+    font-size: 25px;
+}
+
+/* CONTENEDOR PRINCIPAL */
+
+.principal {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+/* IZQUIERDA */
+
+.columnaIzquierda {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    position: sticky;
+    top: 10px;
+}
+
+.columnaIzquierda h2 {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 19px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 9px;
+    margin-bottom: 4px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 55px;
+}
+
+.botonGuardar {
+    width: 100%;
+    margin-top: 15px;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background: #1976d2;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.botonGuardar:hover {
+    background: #125ca5;
+}
+
+.estadoGuardado {
+    margin-top: 10px;
+    padding: 8px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    background: #e8f5e9;
+    color: #2e7d32;
+    display: none;
+}
+
+/* DERECHA */
+
+.columnaDerecha {
+    min-width: 0;
+}
+
+.barraSuperior {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px 20px;
+    background: #eaf3fc;
+    border: 1px solid #c8def3;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(25,76,120,.08);
+    margin-bottom: 15px;
+}
+
+.barraSuperior .grupoFiltro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.barraSuperior label {
+    margin: 0;
+    color: #21486b;
+    font-size: 14px;
+}
+
+.barraSuperior select,
+.barraSuperior input {
+    height: 40px;
+    background: #fff;
+    border: 1px solid #a9c7e3;
+    border-radius: 7px;
+    max-width: 100%;
+}
+
+.barraSuperior select { width: 180px; }
+.barraSuperior input { width: 170px; }
+.barraSuperior input:focus,
+.barraSuperior select:focus {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+}
+
+#contador {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 12px;
+    margin: 0;
+    border-radius: 7px;
+    background: #d4e6f7;
+    color: #21486b;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* LISTA */
+
+#listaRegistros {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* REGISTRO */
+
+.registro {
+    position: relative;
+    background: white;
+    padding: 12px;
+    border-radius: 9px;
+    box-shadow: 0 2px 7px rgba(0,0,0,.12);
+    border-left: 7px solid #777;
+}
+
+.registro.procede {
+    background: #e8f5e9;
+    border-left-color: #2e7d32;
+}
+
+.registro.no-procede {
+    background: #ffebee;
+    border-left-color: #c62828;
+}
+
+.registro.pendiente {
+    border-left-color: #777;
+}
+
+.numeroRegistro {
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+}
+
+.datos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 15px;
+}
+
+.dato {
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.dato strong {
+    color: #333;
+}
+
+.estadoActual {
+    margin-top: 9px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* BOTONES */
+
+.botonesEstado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 9px;
+}
+
+.botonProcede,
+.botonNoProcede,
+.botonCopiar {
+    padding: 9px 15px;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.botonProcede {
+    background: #2e7d32;
+}
+
+.botonNoProcede {
+    background: #c62828;
+}
+
+.botonProcede:hover {
+    background: #1b5e20;
+}
+
+.botonNoProcede:hover {
+    background: #8e0000;
+}
+
+.botonCopiar { background: #1976d2; }
+.botonCopiar:hover { background: #125ca5; }
+.mensajeCopia { margin-top: 8px; font-size: 13px; }
+
+/* OBSERVACIÓN */
+
+.observacion {
+    margin-top: 10px;
+}
+
+.observacion label {
+    margin-top: 0;
+    font-size: 13px;
+}
+
+.observacion textarea {
+    min-height: 50px;
+    background: white;
+}
+
+/* ELIMINAR */
+
+.botonEliminar {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: #d32f2f;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.botonEliminar:hover {
+    background: #9a0007;
+}
+
+/* SIN REGISTROS */
+
+.sinRegistros {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    color: #777;
+}
+
+/* CELULAR */
+
+@media (max-width: 800px) {
+
+    .principal {
+        grid-template-columns: 1fr;
+    }
+
+    .columnaIzquierda {
+        position: static;
+    }
+
+    .datos {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Plantilla Empadronamiento</h1>
+
+<div class="principal">
+
+    <!-- =========================
+         FORMULARIO
+         ========================= -->
+
+    <div class="columnaIzquierda">
+
+        <h2>Ingresar datos</h2>
+
+        <label>Localidad:</label>
+
+        <input
+            type="text"
+            id="localidad"
+            value="Lima"
+        >
+
+        <label>Casa:</label>
+
+        <select id="casa">
+
+            <option value="">Seleccione una casa</option>
+            <option value="JINORSA">JINORSA</option>
+            <option value="DICOBELSA">DICOBELSA</option>
+            <option value="DACIA">DACIA</option>
+            <option value="GUMI">GUMI</option>
+            <option value="CODIJISA">CODIJISA</option>
+
+        </select>
+
+        <label>Nombre:</label>
+
+        <input
+            type="text"
+            id="nombre"
+            placeholder="Ingrese nombre"
+        >
+
+        <label for="tipoDocumento">Tipo de documento:</label>
+        <select id="tipoDocumento">
+            <option value="DNI">DNI</option>
+            <option value="RUC">RUC</option>
+            <option value="CE">CE</option>
+        </select>
+        <label for="numeroDocumento">Número de DNI / RUC / CE:</label>
+        <input type="text" id="numeroDocumento" placeholder="Ingrese el número de documento" autocomplete="off">
+
+        <label>Dirección:</label>
+
+        <input
+            type="text"
+            id="direccion"
+            placeholder="Ingrese dirección"
+        >
+
+        <label>Coordenadas:</label>
+
+        <input
+            type="text"
+            id="coordenadas"
+            placeholder="Ejemplo: -12.0464,-77.0428"
+        >
+
+        <button
+            class="botonGuardar"
+            onclick="guardarRegistro()"
+        >
+            💾 GUARDAR REGISTRO
+        </button>
+
+        <div
+            id="estadoGuardado"
+            class="estadoGuardado"
+        >
+            🟢 Guardado en esta máquina
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         REGISTROS
+         ========================= -->
+
+    <div class="columnaDerecha">
+
+        <div class="barraSuperior">
+
+            <div class="grupoFiltro">
+            <label for="filtroCasa">Filtrar por casa:</label>
+
+            <select
+                id="filtroCasa"
+                onchange="mostrarRegistros()"
+            >
+
+                <option value="TODAS">TODAS</option>
+                <option value="JINORSA">JINORSA</option>
+                <option value="DICOBELSA">DICOBELSA</option>
+                <option value="DACIA">DACIA</option>
+                <option value="GUMI">GUMI</option>
+                <option value="CODIJISA">CODIJISA</option>
+
+            </select>
+
+            </div>
+            <div class="grupoFiltro">
+                <label for="filtroDocumento">Buscar por documento:</label>
+                <input type="search" id="filtroDocumento" placeholder="N.º de documento" maxlength="11" inputmode="numeric" pattern="[0-9]{0,11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11); mostrarRegistros()" autocomplete="off">
+            </div>
+
+            <span id="contador">
+                Registros: 0
+            </span>
+
+        </div>
+
+        <div id="listaRegistros"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CONFIGURACIÓN DEL GUARDADO
+   ===================================================== */
+
+var CLAVE_GUARDADO = "PlantillaEmpadronamiento_11M";
+
+var registros = [];
+
+
+/* =====================================================
+   INICIAR
+   ===================================================== */
+
+window.onload = function() {
+
+    cargarDatos();
+
+};
+
+
+/* =====================================================
+   CARGAR DATOS DESDE LOCALHOST / NAVEGADOR
+   ===================================================== */
+
+function cargarDatos() {
+
+    try {
+
+        var datos =
+            localStorage.getItem(CLAVE_GUARDADO);
+
+        if (datos !== null && datos !== "") {
+
+            registros = JSON.parse(datos);
+
+        } else {
+
+            registros = [];
+
+        }
+
+        mostrarRegistros();
+
+    }
+    catch (error) {
+
+        console.error(
+            "Error al cargar:",
+            error
+        );
+
+        registros = [];
+
+        mostrarRegistros();
+
+    }
+
+}
+
+
+/* =====================================================
+   GUARDAR EN LOCALSTORAGE
+   ===================================================== */
+
+function guardarDatos() {
+
+    try {
+
+        localStorage.setItem(
+            CLAVE_GUARDADO,
+            JSON.stringify(registros)
+        );
+
+        /* COMPROBAR QUE REALMENTE SE GUARDÓ */
+
+        var comprobacion =
+            localStorage.getItem(CLAVE_GUARDADO);
+
+        if (comprobacion === null) {
+
+            throw new Error(
+                "El navegador no permitió guardar."
+            );
+
+        }
+
+        return true;
+
+    }
+    catch (error) {
+
+        console.error(
+            "ERROR DE GUARDADO:",
+            error
+        );
+
+        alert(
+            "⚠️ No se pudo guardar la información.\n\n" +
+            "El navegador está bloqueando el almacenamiento."
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   GUARDAR NUEVO REGISTRO
+   ===================================================== */
+
+function guardarRegistro() {
+
+    var localidad =
+        document.getElementById("localidad").value.trim();
+
+    var casa =
+        document.getElementById("casa").value;
+
+    var nombre =
+        document.getElementById("nombre").value.trim();
+
+    var direccion =
+        document.getElementById("direccion").value.trim();
+
+    var coordenadas =
+        document.getElementById("coordenadas").value.trim();
+
+
+    var tipoDocumento = document.getElementById("tipoDocumento").value;
+    var numeroDocumento = document.getElementById("numeroDocumento").value.trim();
+
+    /* VALIDACIONES */
+
+    if (localidad === "") {
+
+        alert("Ingrese la localidad.");
+
+        return;
+
+    }
+
+    if (casa === "") {
+
+        alert("Seleccione una casa.");
+
+        return;
+
+    }
+
+    if (nombre === "") {
+
+        alert("Ingrese el nombre.");
+
+        return;
+
+    }
+
+    if (direccion === "") {
+
+        alert("Ingrese la dirección.");
+
+        return;
+
+    }
+
+    if (coordenadas === "") {
+
+        alert("Ingrese las coordenadas.");
+
+        return;
+
+    }
+
+
+    /* CREAR REGISTRO */
+
+    var registro = {
+
+        id: Date.now(),
+
+        localidad: localidad,
+
+        casa: casa,
+
+        nombre: nombre,
+
+        tipoDocumento: tipoDocumento,
+
+        numeroDocumento: numeroDocumento,
+
+        direccion: direccion,
+
+        coordenadas: coordenadas,
+
+        estado: "PENDIENTE",
+
+        observacion: ""
+
+    };
+
+
+    /* AGREGAR AL FINAL */
+
+    registros.push(registro);
+
+
+    /* GUARDAR */
+
+    if (!guardarDatos()) {
+
+        /* Si falla, quitamos el registro */
+
+        registros.pop();
+
+        return;
+
+    }
+
+
+    /* MOSTRAR */
+
+    mostrarRegistros();
+
+
+    /* LIMPIAR */
+
+    document.getElementById("nombre").value = "";
+    document.getElementById("numeroDocumento").value = "";
+
+    document.getElementById("direccion").value = "";
+
+    document.getElementById("coordenadas").value = "";
+
+
+    /* MENSAJE */
+
+    var indicador =
+        document.getElementById("estadoGuardado");
+
+    indicador.style.display = "block";
+
+
+    setTimeout(function() {
+
+        indicador.style.display = "none";
+
+    }, 2500);
+
+}
+
+
+/* =====================================================
+   MOSTRAR REGISTROS
+   ===================================================== */
+
+function mostrarRegistros() {
+
+    var contenedor =
+        document.getElementById("listaRegistros");
+
+    var filtro =
+        document.getElementById("filtroCasa").value;
+
+
+    var documentoBuscado = document.getElementById("filtroDocumento").value.trim().toUpperCase();
+
+    contenedor.innerHTML = "";
+
+    var cantidad = 0;
+
+
+    for (
+        var i = 0;
+        i < registros.length;
+        i++
+    ) {
+
+        var registro =
+            registros[i];
+
+
+        if (
+            filtro !== "TODAS" &&
+            registro.casa !== filtro
+        ) {
+
+            continue;
+
+        }
+
+
+        if (documentoBuscado && String(registro.numeroDocumento || "").toUpperCase().indexOf(documentoBuscado) === -1) {
+            continue;
+        }
+
+        cantidad++;
+
+
+        /* TARJETA */
+
+        var tarjeta =
+            document.createElement("div");
+
+        tarjeta.className =
+            "registro " +
+            claseEstado(registro.estado);
+
+
+        /* NÚMERO */
+
+        var numero =
+            document.createElement("div");
+
+        numero.className =
+            "numeroRegistro";
+
+        numero.textContent =
+            "Registro #" + (i + 1);
+
+        tarjeta.appendChild(numero);
+
+
+        /* X */
+
+        var eliminar =
+            document.createElement("button");
+
+        eliminar.className =
+            "botonEliminar";
+
+        eliminar.textContent =
+            "X";
+
+        eliminar.onclick =
+            (function(id) {
+
+                return function() {
+
+                    eliminarRegistro(id);
+
+                };
+
+            })(registro.id);
+
+
+        tarjeta.appendChild(eliminar);
+
+
+        /* DATOS */
+
+        var datos =
+            document.createElement("div");
+
+        datos.className =
+            "datos";
+
+
+        agregarDato(
+            datos,
+            "Localidad",
+            registro.localidad
+        );
+
+        agregarDato(
+            datos,
+            "Casa",
+            registro.casa
+        );
+
+        agregarDato(
+            datos,
+            "Nombre",
+            registro.nombre
+        );
+
+        agregarDato(
+            datos,
+            "Dirección",
+            registro.direccion
+        );
+
+        agregarDato(
+            datos,
+            "Coordenadas",
+            registro.coordenadas
+        );
+
+
+        agregarDato(datos, registro.tipoDocumento || "DNI / RUC / CE", registro.numeroDocumento || "Sin registrar");
+
+        tarjeta.appendChild(datos);
+
+
+        /* ESTADO */
+
+        var estado =
+            document.createElement("div");
+
+        estado.className =
+            "estadoActual";
+
+        estado.textContent =
+            "Estado: " + registro.estado;
+
+        tarjeta.appendChild(estado);
+
+
+        /* BOTONES */
+
+        var botones =
+            document.createElement("div");
+
+        botones.className =
+            "botonesEstado";
+
+
+        var procede =
+            document.createElement("button");
+
+        procede.className =
+            "botonProcede";
+
+        procede.textContent =
+            "🟢 PROCEDE";
+
+
+        procede.onclick =
+            (function(id) {
+
+                return function() {
+
+                    cambiarEstado(
+                        id,
+                        "PROCEDE"
+                    );
+
+                };
+
+            })(registro.id);
+
+
+        var noProcede =
+            document.createElement("button");
+
+        noProcede.className =
+            "botonNoProcede";
+
+        noProcede.textContent =
+            "🔴 NO PROCEDE";
+
+
+        noProcede.onclick =
+            (function(id) {
+
+                return function() {
+
+                    cambiarEstado(
+                        id,
+                        "NO PROCEDE"
+                    );
+
+                };
+
+            })(registro.id);
+
+
+        botones.appendChild(procede);
+
+        botones.appendChild(noProcede);
+
+        var copiar = document.createElement("button");
+        copiar.className = "botonCopiar";
+        copiar.textContent = "📋 COPIAR";
+        var mensajeCopia = document.createElement("div");
+        mensajeCopia.className = "mensajeCopia";
+        mensajeCopia.setAttribute("role", "status");
+        copiar.onclick = (function(id, mensaje) {
+            return function() { copiarRegistro(id, mensaje); };
+        })(registro.id, mensajeCopia);
+        botones.appendChild(copiar);
+
+        tarjeta.appendChild(botones);
+        tarjeta.appendChild(mensajeCopia);
+
+
+        /* OBSERVACIÓN */
+
+        var observacion =
+            document.createElement("div");
+
+        observacion.className =
+            "observacion";
+
+
+        var etiqueta =
+            document.createElement("label");
+
+        etiqueta.textContent =
+            "Observación:";
+
+
+        var campo =
+            document.createElement("textarea");
+
+        campo.placeholder =
+            "Escriba una observación...";
+
+        campo.value =
+            registro.observacion || "";
+
+
+        campo.oninput =
+            (function(id) {
+
+                return function() {
+
+                    actualizarObservacion(
+                        id,
+                        this.value
+                    );
+
+                };
+
+            })(registro.id);
+
+
+        observacion.appendChild(etiqueta);
+
+        observacion.appendChild(campo);
+
+        tarjeta.appendChild(observacion);
+
+
+        contenedor.appendChild(tarjeta);
+
+    }
+
+
+    /* CONTADOR */
+
+    document.getElementById("contador").textContent =
+        "Registros: " +
+        cantidad +
+        " / " +
+        registros.length;
+
+
+    /* SIN REGISTROS */
+
+    if (cantidad === 0) {
+
+        var mensaje =
+            document.createElement("div");
+
+        mensaje.className =
+            "sinRegistros";
+
+        if (registros.length === 0) {
+
+            mensaje.textContent =
+                "No hay registros todavía.";
+
+        } else {
+
+            mensaje.textContent =
+                "No hay registros que coincidan con los filtros.";
+
+        }
+
+        contenedor.appendChild(mensaje);
+
+    }
+
+}
+
+
+/* =====================================================
+   AGREGAR DATO DE FORMA SEGURA
+   ===================================================== */
+
+function agregarDato(
+    contenedor,
+    titulo,
+    valor
+) {
+
+    var dato =
+        document.createElement("div");
+
+    dato.className =
+        "dato";
+
+
+    var fuerte =
+        document.createElement("strong");
+
+    fuerte.textContent =
+        titulo + ": ";
+
+
+    var texto =
+        document.createElement("span");
+
+    texto.textContent =
+        valor;
+
+
+    dato.appendChild(fuerte);
+
+    dato.appendChild(texto);
+
+    contenedor.appendChild(dato);
+
+}
+
+
+/* =====================================================
+   CAMBIAR ESTADO
+   ===================================================== */
+
+function cambiarEstado(
+    id,
+    nuevoEstado
+) {
+
+    for (
+        var i = 0;
+        i < registros.length;
+        i++
+    ) {
+
+        if (
+            registros[i].id === id
+        ) {
+
+            registros[i].estado =
+                nuevoEstado;
+
+            break;
+
+        }
+
+    }
+
+
+    guardarDatos();
+
+    mostrarRegistros();
+
+}
+
+
+/* =====================================================
+   GUARDAR OBSERVACIÓN
+   ===================================================== */
+
+function actualizarObservacion(
+    id,
+    texto
+) {
+
+    for (
+        var i = 0;
+        i < registros.length;
+        i++
+    ) {
+
+        if (
+            registros[i].id === id
+        ) {
+
+            registros[i].observacion =
+                texto;
+
+            break;
+
+        }
+
+    }
+
+
+    /* SE GUARDA AUTOMÁTICAMENTE */
+
+    guardarDatos();
+
+}
+
+
+/* =====================================================
+   ELIMINAR
+   ===================================================== */
+
+function eliminarRegistro(id) {
+
+    if (
+        !confirm(
+            "¿Está seguro de eliminar este registro?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    var nuevos = [];
+
+
+    for (
+        var i = 0;
+        i < registros.length;
+        i++
+    ) {
+
+        if (
+            registros[i].id !== id
+        ) {
+
+            nuevos.push(
+                registros[i]
+            );
+
+        }
+
+    }
+
+
+    registros = nuevos;
+
+
+    guardarDatos();
+
+    mostrarRegistros();
+
+}
+
+
+/* =====================================================
+   COLOR DEL ESTADO
+   ===================================================== */
+
+function textoRegistro(registro) {
+    return "Localidad: " + (registro.localidad || "") + "\n" +
+        "Casa: " + (registro.casa || "") + "\n" +
+        "Nombre: " + (registro.nombre || "") + "\n" +
+        "Dirección: " + (registro.direccion || "") + "\n" +
+        "Coordenadas: " + (registro.coordenadas || "");
+}
+
+// Alternativa para archivos locales y navegadores sin Clipboard API.
+function copiarTextoLocal(texto) {
+    var anterior = document.activeElement;
+    var campo = document.createElement("textarea");
+    campo.value = texto;
+    campo.setAttribute("readonly", "");
+    campo.style.position = "fixed";
+    campo.style.top = "0";
+    campo.style.left = "0";
+    campo.style.opacity = "0";
+    document.body.appendChild(campo);
+    try {
+        campo.focus();
+        campo.select();
+        campo.setSelectionRange(0, campo.value.length);
+        return document.execCommand("copy");
+    } finally {
+        campo.remove();
+        if (anterior && anterior.focus) anterior.focus({preventScroll: true});
+    }
+}
+
+async function copiarRegistro(id, mensaje) {
+    var registro = registros.find(function(item) { return item.id === id; });
+    if (!registro) return;
+    var texto = textoRegistro(registro);
+    var copiado = false;
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(texto);
+            copiado = true;
+        }
+    } catch (error) { /* Intentar la alternativa local. */ }
+    if (!copiado) {
+        try { copiado = copiarTextoLocal(texto); } catch (error) { copiado = false; }
+    }
+    mensaje.textContent = copiado ? "✓ Registro copiado." : "No se pudo copiar automáticamente. Copie el texto de la ventana.";
+    if (!copiado) window.prompt("Copie el registro:", texto);
+}
+
+function claseEstado(estado) {
+
+    if (
+        estado === "PROCEDE"
+    ) {
+
+        return "procede";
+
+    }
+
+
+    if (
+        estado === "NO PROCEDE"
+    ) {
+
+        return "no-procede";
+
+    }
+
+
+    return "pendiente";
+
+}
+
+</script>
+
+</body>
+</html>
