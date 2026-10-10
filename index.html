@@ -341,6 +341,15 @@ textarea {
 
         </select>
 
+        <label for="tipoDocumento">Tipo de documento:</label>
+        <select id="tipoDocumento">
+            <option value="DNI">DNI</option>
+            <option value="RUC">RUC</option>
+            <option value="CE">CE</option>
+        </select>
+        <label for="numeroDocumento">Documento:</label>
+        <input type="text" id="numeroDocumento" placeholder="Ingrese el número de documento" autocomplete="off">
+        
         <label>Nombre:</label>
 
         <input
@@ -348,16 +357,6 @@ textarea {
             id="nombre"
             placeholder="Ingrese nombre"
         >
-
-        <label for="tipoDocumento">Tipo de documento:</label>
-        <select id="tipoDocumento">
-            <option value="DNI">DNI</option>
-            <option value="RUC">RUC</option>
-            <option value="CE">CE</option>
-        </select>
-        <label for="numeroDocumento">Número de DNI / RUC / CE:</label>
-        <input type="text" id="numeroDocumento" placeholder="Ingrese el número de documento" autocomplete="off">
-
         <label>Dirección:</label>
 
         <input
